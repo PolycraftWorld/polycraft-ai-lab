@@ -14,7 +14,7 @@ Experiment Creation Tool (which will eventually be in its own repository).
 ## Usage
 **Note: this is an example of planned usage coming soon.**
 ```python
-from tests import setup_env
+from polycraft_lab.helpers import setup_env
 
 POGO_EXPERIMENT_CONFIG_PATH = '/home/me/pogostick_challenge.json'
 

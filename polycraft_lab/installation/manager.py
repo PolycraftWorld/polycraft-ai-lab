@@ -6,6 +6,8 @@ import shutil
 import subprocess
 from pathlib import Path
 
+from polycraft_lab.installation.download import download_polycraft
+
 POLYCRAFT_LAB_DIR = 'polycraft-lab'
 
 POLYCRAFT_MOD_DIR = 'polycraft-world'
@@ -53,11 +55,10 @@ class PolycraftInstallation:
     def uninstall(self):
         shutil.rmtree(self._installation_directory, onerror=log.error)
 
-    @staticmethod
-    def _download_polycraft():
+    def _download_polycraft(self):
         # Get from GitHub releases /cloning repo
         try:
-            pass
+            download_polycraft(self._installation_directory)
         except Exception:
             raise InstallationDownloadError()
 

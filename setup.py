@@ -1,5 +1,7 @@
 from setuptools import find_packages, setup
 
+from polycraft_lab.installation.post_pip_install import PostDevelopCommand, PostInstallCommand
+
 with open('README.md', 'r') as file:
     long_description = file.read()
 
@@ -12,10 +14,15 @@ setup(
     long_description=long_description,
     long_description_content_type='text/markdown',
     url='https://github.com/PolycraftWorld/polycraft-ai-lab',
+    project_urls={
+        "Bug Tracker": "https://github.com/PolycraftWorld/polycraft-ai-lab/issues/",
+        "Documentation": "https://polycraftworld.github.io/polycraft-ai-lab/",
+        "Source Code": "https://github.com/PolycraftWorld/polycraft-ai-lab/",
+    },
     packages=find_packages(),
     cmdclass={
-        'develop': 'polycraft_lab.installation.post_pip_install:PostDevelopCommand',
-        'install': 'polycraft_lab.installation.post_pip_install:PostInstallCommand',
+        'develop': PostDevelopCommand,
+        'install': PostInstallCommand,
     },
     install_requires=['gym'],
     classifiers=[

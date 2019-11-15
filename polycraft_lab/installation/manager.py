@@ -6,7 +6,7 @@ import shutil
 import subprocess
 from pathlib import Path
 
-from polycraft_lab.installation.download import download_polycraft
+from polycraft_lab.installation.download import download_and_extract_polycraft
 
 POLYCRAFT_LAB_DIR = 'polycraft-lab'
 
@@ -39,6 +39,7 @@ class PolycraftInstallation:
 
     def install(self, force_install: bool = False):
         """Installs and builds a development version of Minecraft."""
+        # TODO: Allow specific version of mod to be chosen
         if self.is_installed and force_install:
             try:
                 self._download_polycraft()
@@ -58,7 +59,7 @@ class PolycraftInstallation:
     def _download_polycraft(self):
         # Get from GitHub releases /cloning repo
         try:
-            download_polycraft(self._installation_directory)
+            download_and_extract_polycraft(self._installation_directory)
         except Exception:
             raise InstallationDownloadError()
 

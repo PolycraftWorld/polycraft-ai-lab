@@ -13,10 +13,19 @@ Experiment Creation Tool (which will eventually be in its own repository).
 
 ## Usage
 **Note: this is an example of planned usage coming soon.**
+
+First, download Polycraft AI Lab using pip or pipenv:
+```
+pip install polycraft-lab
+```
+
+TODO: Update docs to include more thorough example.
+
+Now train your agent:
 ```python
 from polycraft_lab.helpers import setup_env
 
-POGO_EXPERIMENT_CONFIG_PATH = '/home/me/pogostick_challenge.json'
+POGO_EXPERIMENT_CONFIG_PATH = '/home/me/experiments/pogostick_challenge.json'
 
 env = setup_env(POGO_EXPERIMENT_CONFIG_PATH)
 observation = env.reset()
@@ -58,4 +67,18 @@ pipenv install
 Alternatively, install using pip:
 ```
 pip install -r requirements.txt
+```
+
+### Distribution
+Polycraft AI Lab will be distributed using pip.
+
+Run the following to prepare Polycraft for distribution:
+```
+python setup.py sdist bdist_wheel
+pip install --user --upgrade twine
+```
+Now run the following to upload the package to PyPI:
+```
+# NOTE: Use https://test.pypi.org/legacy/ for test or staging releases.
+python -m twine upload dist/*
 ```

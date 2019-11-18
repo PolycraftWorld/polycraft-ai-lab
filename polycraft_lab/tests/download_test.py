@@ -1,7 +1,7 @@
 import socket
 import unittest
 
-from installation import PAL_LAB_DIR_NAME, PAL_MOD_DIR_NAME
+from polycraft_lab.installation import PAL_LAB_DIR_NAME, PAL_MOD_DIR_NAME
 from polycraft_lab.installation.download import download_and_extract_polycraft
 from polycraft_lab.tests import POLYCRAFT_TESTS_DIR
 

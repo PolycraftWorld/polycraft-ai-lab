@@ -16,7 +16,7 @@ import signal
 import socket
 from subprocess import PIPE, Popen
 
-from installation.config import PolycraftLabConfig
+from polycraft_lab.installation.config import PolycraftLabConfig
 from polycraft_lab.installation.manager import PolycraftInstallation
 
 DEFAULT_HOST = '127.0.0.1'

@@ -8,7 +8,7 @@ from urllib import request
 from urllib.error import URLError
 from zipfile import ZipFile
 
-from installation import PAL_MOD_DIR_NAME, PAL_TEMP_PATH
+from polycraft_lab.installation import PAL_MOD_DIR_NAME, PAL_TEMP_PATH
 
 # TODO: Update repo with actual URL
 REPO_URL = 'https://github.com/StephenGss/polycraft/archive/1.8.9AIGym.zip'

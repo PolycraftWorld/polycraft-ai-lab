@@ -3,9 +3,9 @@ from typing import Tuple
 
 from gym import Env
 
-from installation.manager import PolycraftInstallation
 from polycraft_lab.envs.experiment_config import ExperimentConfig
 from polycraft_lab.installation.client import PolycraftClient
+from polycraft_lab.installation.manager import PolycraftInstallation
 
 log = logging.getLogger(__name__)
 

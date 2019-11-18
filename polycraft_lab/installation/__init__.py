@@ -12,6 +12,6 @@ log = logging.getLogger('pal').getChild('installer')
 log.setLevel(logging.DEBUG)
 log.addHandler(logging.StreamHandler())
 
-PAL_TEMP_PATH = Path(tempfile.gettempdir()) / 'polycraft'
 PAL_MOD_DIR_NAME = 'polycraft-world'
 PAL_LAB_DIR_NAME = 'polycraft-lab'
+PAL_TEMP_PATH = Path(tempfile.gettempdir()) / PAL_LAB_DIR_NAME

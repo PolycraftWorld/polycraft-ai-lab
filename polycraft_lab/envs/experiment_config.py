@@ -31,7 +31,8 @@ class ExperimentConfig:
 
     @staticmethod
     def _load_config(config_path: str) -> dict:
-        return json.load(config_path)
+        with codecs.open(config_path) as file:
+            return json.load(file)
 
     @property
     def action_space(self) -> Dict:

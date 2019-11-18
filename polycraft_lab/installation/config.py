@@ -33,7 +33,8 @@ class PolycraftLabConfig:
         Args:
             config_path (str): The path to the experiment configuration file JSON.
         """
-        return json.load(config_path)
+        with codecs.open(config_path) as file:
+            return json.load(file)
 
     @property
     def lab_server_port(self):

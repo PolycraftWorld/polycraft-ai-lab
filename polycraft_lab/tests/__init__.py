@@ -2,4 +2,4 @@
 import os
 from pathlib import Path
 
-POLYCRAFT_TESTS_DIR = Path(os.path.expanduser('~')) / 'polycraft_tests'
+POLYCRAFT_TESTS_DIR = Path(os.path.expanduser('~')) / 'polycraft-tests'

@@ -1,6 +1,7 @@
 import socket
 import unittest
 
+from installation import PAL_LAB_DIR_NAME, PAL_MOD_DIR_NAME
 from polycraft_lab.installation.download import download_and_extract_polycraft
 from polycraft_lab.tests import POLYCRAFT_TESTS_DIR
 
@@ -8,9 +9,9 @@ from polycraft_lab.tests import POLYCRAFT_TESTS_DIR
 class DownloadModTestCase(unittest.TestCase):
     """Verify all download functions work correctly."""
 
-    DOWNLOAD_DIRECTORY = POLYCRAFT_TESTS_DIR / 'polycraft-download'
+    DOWNLOAD_DIRECTORY = POLYCRAFT_TESTS_DIR / PAL_MOD_DIR_NAME
 
-    INSTALLATION_DIRECTORY = POLYCRAFT_TESTS_DIR / 'polycraft'
+    INSTALLATION_DIRECTORY = POLYCRAFT_TESTS_DIR / PAL_LAB_DIR_NAME
 
     TEST_REPO_LOCATION = 'https://filebin.net/p5rcppoqfxiipiak/polycraft-1.8.9AIGym.zip?t=01f0elf7'
 

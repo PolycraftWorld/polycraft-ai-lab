@@ -3,4 +3,4 @@
 Examples can be found in `examples`.
 """
 
-__all__ = ['cli', 'ect', 'envs', 'examples']
+__all__ = ['cli', 'ect', 'envs', 'examples', 'tests']

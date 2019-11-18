@@ -1,20 +1,25 @@
+"""Utility functions for downloading Polycraft Lab resources."""
+
 import logging
 import os
-import tempfile
+import shutil
 from pathlib import Path
 from urllib import request
 from urllib.error import URLError
 from zipfile import ZipFile
 
+from installation import PAL_MOD_DIR_NAME, PAL_TEMP_PATH
+
+# TODO: Update repo with actual URL
 REPO_URL = 'https://github.com/StephenGss/polycraft/archive/1.8.9AIGym.zip'
 
-MOD_ZIP_NAME = 'polycraft-world.zip'
+MOD_ZIP_NAME = 'polycraft-world-bundle.zip'
 
-log = logging.Logger(__name__)
+log = logging.getLogger('pal').getChild('installer')
 
 
 def download_and_extract_polycraft(installation_directory: str,
-                                   download_directory: str = tempfile.gettempdir(),
+                                   download_directory: str = PAL_TEMP_PATH,
                                    retries: int = 5,
                                    repo_location: str = REPO_URL,
                                    should_cleanup: bool = True):
@@ -23,7 +28,8 @@ def download_and_extract_polycraft(installation_directory: str,
     This downloads the Polycraft World mod to a temporary directory before
     moving its contents to the given directory.
 
-    In the event that files already exist, they will be overwritten.
+    In the event that files already exist in the given installation_directory,
+    they will be overwritten.
 
     Args:
         installation_directory (str): Where Polycraft World mod files will be
@@ -42,21 +48,33 @@ def download_and_extract_polycraft(installation_directory: str,
         log.info('Downloading Polycraft World mod, attempt #%s', attempt)
         try:
             Path(download_directory).mkdir(parents=True, exist_ok=True)  # Ensure the directory exists
-            download_file_path = f'{download_directory}/{MOD_ZIP_NAME}'
+            download_file_path = Path(download_directory) / MOD_ZIP_NAME
             log.debug('Downloading to %s', download_file_path)
             request.urlretrieve(repo_location, filename=download_file_path)
             with ZipFile(download_file_path, 'r') as zip_ref:
-                extracted_name = zip_ref.namelist()[0]  # GitHub should only have one directory
-                zip_ref.extractall(path=Path(installation_directory).parent)
-                os.rename(Path(installation_directory).parent / extracted_name,
-                          installation_directory)
+                # Downloading from GitHub should only have one subdirectory
+                extracted_name = zip_ref.namelist()[0]
+                zip_ref.extractall(path=Path(installation_directory))
+            os.chdir(Path(installation_directory).parent)
+            os.rename(Path(installation_directory) / extracted_name,
+                      Path(PAL_TEMP_PATH) / PAL_MOD_DIR_NAME)
+            shutil.rmtree(installation_directory)
+            os.rename(Path(PAL_TEMP_PATH) / PAL_MOD_DIR_NAME,
+                      installation_directory)
+            # TODO: Cache installation of mod to prevent unnecessary downloads
+            if should_cleanup:
+                shutil.rmtree(PAL_TEMP_PATH)
             return
         except URLError as e:
-            log.error('Could not download Polycraft World', e)
+            log.error('Could not download Polycraft World on attempt %s', attempt)
+            raise PolycraftDownloadError(e)
+        except OSError as e:
+            log.exception('Error when extracting Polycraft World mod')
             raise PolycraftDownloadError(e)
         except Exception as e:
-            log.error('Could not download Polycraft World', e)
+            log.exception('Could not download Polycraft World on attempt %s', attempt)
             raise PolycraftDownloadError(e)
+    log.error('Could not download Polycraft World mod.')
     raise PolycraftDownloadError()
 
 

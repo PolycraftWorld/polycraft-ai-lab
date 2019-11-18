@@ -24,7 +24,7 @@ class PolycraftLabConfig:
         Args:
             installation_dir (str): The path to the Polycraft Installation.
         """
-        return cls(f'{installation_dir}/{CONFIG_FILE_NAME}')
+        return cls(str(Path(installation_dir) / CONFIG_FILE_NAME))
 
     @staticmethod
     def _load_config(config_path: str) -> dict:

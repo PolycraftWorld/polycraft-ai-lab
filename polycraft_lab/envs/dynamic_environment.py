@@ -35,9 +35,8 @@ class DynamicExperimentEnv(Env):
         log.info('Config fetched.')
         installation = PolycraftInstallation()
         try:
-            if not installation.is_installed:  # Just in case pip install didn't work
-                installation.install()  # TODO: Probably just wrap this in a "ensure_installed" function
-            self.client = PolycraftClient(installation.client_location)
+            installation.ensure_polycraft_installed()
+            self.client = PolycraftClient(installation.location)
             self.action_space = self.config.action_space
         except Exception:
             raise Exception('Cannot start training. Error during Polycraft runtime installation.')

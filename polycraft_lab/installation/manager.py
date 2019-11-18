@@ -95,15 +95,18 @@ class PolycraftInstallation:
             raise InstallationDownloadError()
 
     def _run_setup(self):
-        os.chdir(
-            Path(self._installation_directory) / POLYCRAFT_MOD_DIR)  # Make sure we're in root directory before running
+        os.chdir(Path(self._installation_directory) / PAL_MOD_DIR_NAME)
 
-        gradlew_name = 'gradlew'
-        if platform.system() == 'Windows':
+        system = platform.system()
+        if system == 'Windows':
             gradlew_name = 'gradlew.bat'
-        executable = f'{self._installation_directory}\\{gradlew_name}'
+        elif system == 'Linux':
+            gradlew_name = 'gradlew'
+        else:
+            raise RuntimeError('OS not supported for Polycraft Lab: %s', system)
+        executable = str(Path(self.client_location) / gradlew_name)
         try:
-            logging.info(f'Setting up workspace in {self._installation_directory}...')
+            logging.info(f'Setting up workspace in {self.client_location}...')
             subprocess.run(f'{executable} setupDecompWorkspace --refresh-dependencies'.split())
             logging.info('Starting Minecraft build...')
             logging.info('This may take a while.')

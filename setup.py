@@ -13,11 +13,11 @@ setup(
     description='A tool to help train RL agents in novel environments.',
     long_description=long_description,
     long_description_content_type='text/markdown',
-    url='https://github.com/PolycraftWorld/polycraft-ai-lab',
+    url='https://polycraftworld.com',
     project_urls={
-        "Bug Tracker": "https://github.com/PolycraftWorld/polycraft-ai-lab/issues/",
-        "Documentation": "https://polycraftworld.github.io/polycraft-ai-lab/",
-        "Source Code": "https://github.com/PolycraftWorld/polycraft-ai-lab/",
+        'Bug Tracker': 'https://github.com/PolycraftWorld/polycraft-ai-lab/issues/',
+        'Documentation': 'https://polycraftworld.github.io/polycraft-ai-lab/',
+        'Source Code': 'https://github.com/PolycraftWorld/polycraft-ai-lab/',
     },
     packages=find_packages(),
     cmdclass={

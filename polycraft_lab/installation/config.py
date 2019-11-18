@@ -39,7 +39,7 @@ class PolycraftLabConfig:
     @property
     def lab_server_port(self):
         """Return the Polycraft Lab socket port."""
-        return self.config[CONFIG_LAB_SERVER_PORT]
+        return self.config['lab']['server']['port']
 
     @lab_server_port.setter
     def lab_server_port(self, new_port: int):
@@ -47,7 +47,7 @@ class PolycraftLabConfig:
         self.config[CONFIG_LAB_SERVER_PORT] = new_port
         with codecs.open(self._config_path, 'r+', encoding='utf-8') as config_file:
             data = json.load(config_file)
-            data[CONFIG_LAB_SERVER_PORT] = new_port
+            data['lab']['server']['port'] = new_port
             config_file.seek(0)
             json.dump(data, config_file, indent=4)
             config_file.truncate()
@@ -58,7 +58,7 @@ class PolycraftLabConfig:
 
         Example: '127.0.0.1'
         """
-        return self.config[CONFIG_LAB_SERVER_HOST]
+        return self.config['lab']['server']['host']
 
     @lab_server_host.setter
     def lab_server_host(self, new_host):
@@ -69,7 +69,7 @@ class PolycraftLabConfig:
         self.config[CONFIG_LAB_SERVER_PORT] = new_host
         with codecs.open(self._config_path, 'r+', encoding='utf-8') as config_file:
             data = json.load(config_file)
-            data[CONFIG_LAB_SERVER_PORT] = new_host
+            data['lab']['server']['host'] = new_host
             config_file.seek(0)
             json.dump(data, config_file, indent=4)
             config_file.truncate()

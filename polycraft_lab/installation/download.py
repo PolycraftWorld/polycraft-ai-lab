@@ -2,7 +2,9 @@
 
 import logging
 import os
+import random
 import shutil
+import time
 from pathlib import Path
 from urllib import request
 from urllib.error import URLError
@@ -10,8 +12,8 @@ from zipfile import ZipFile
 
 from polycraft_lab.installation import PAL_MOD_DIR_NAME, PAL_TEMP_PATH
 
-# TODO: Update repo with actual URL
-REPO_URL = 'https://github.com/StephenGss/polycraft/archive/1.8.9AIGym.zip'
+# TODO: Update repo with actual URL once public
+REPO_URL = 'https://github.com/StephenGss/polycraft/archive/master.zip'
 
 MOD_ZIP_NAME = 'polycraft-world-bundle.zip'
 
@@ -46,6 +48,7 @@ def download_and_extract_polycraft(installation_directory: str,
         # TODO: Perform in separate thread
         # TODO: Implement exponential backoff
         log.info('Downloading Polycraft World mod, attempt #%s', attempt)
+        _backoff(attempt)
         try:
             Path(download_directory).mkdir(parents=True, exist_ok=True)  # Ensure the directory exists
             download_file_path = Path(download_directory) / MOD_ZIP_NAME
@@ -83,3 +86,13 @@ class PolycraftDownloadError(Exception):
 
     This could result from an IO failure or an internet connection issue.
     """
+
+
+def _backoff(attempt: int, wait_time: int = 2):
+    """Perform exponential backoff based on the given attempt.
+
+    Args:
+        attempt (int): The n-th time an operation has been tried
+        wait_time (int): The amount of seconds to wait
+    """
+    time.sleep(wait_time ** attempt + random.randint(0, 1_000) / 1_000)

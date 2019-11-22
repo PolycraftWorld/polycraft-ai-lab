@@ -8,6 +8,7 @@ from pathlib import Path
 
 from polycraft_lab.installation import PAL_LAB_DIR_NAME, PAL_MOD_DIR_NAME
 from polycraft_lab.installation.download import download_and_extract_polycraft
+from polycraft_lab.installation.releases import UnknownVersionError, get_release
 
 log = logging.getLogger('pal').getChild('installer')
 
@@ -44,12 +45,16 @@ class PolycraftInstallation:
         """
         return str(Path(self._installation_directory) / PAL_MOD_DIR_NAME)
 
-    def install(self, force_install: bool = False):
+    def install(self, force_install: bool = False, version: str = 'newest'):
         """Installs and builds a development version of Minecraft.
 
         Args:
             force_install (bool): Will overwrite the existing Polycraft World
                 installation when True, False by default.
+            version (str): The version of Polycraft World to install.
+
+        Raises:
+            UnknownVersionError when the given version does not exist.
         """
         # TODO: Allow specific version of mod to be chosen
         if not self.is_installed or force_install:
@@ -57,9 +62,11 @@ class PolycraftInstallation:
                 log.info('Forcing re-installation of Polycraft World')
             try:
                 log.debug('Now downloading Polycraft')
-                self._download_polycraft()
+                self._download_polycraft(version)
                 log.debug('Launching setup...')
                 self._run_setup()
+            except UnknownVersionError:
+                log.exception('Attempted to install unknown version of Polycraft: %s', version)
             except InstallationDownloadError:
                 log.exception(f'Could not download Polycraft World mod folder to {self.client_location}')
                 raise
@@ -87,10 +94,13 @@ class PolycraftInstallation:
         """Removes the entire Polycraft Lab installation."""
         shutil.rmtree(self._installation_directory, onerror=log.error)
 
-    def _download_polycraft(self):
-        # Get from GitHub releases /cloning repo
+    def _download_polycraft(self, version: str):
+        """Downloads and extracts specified version of Polycraft World."""
         try:
-            download_and_extract_polycraft(self.client_location)
+            # TODO: Handle retries
+            release = get_release(version)
+            download_and_extract_polycraft(self.client_location,
+                                           bundle_location=release.download_url)
         except Exception:
             raise InstallationDownloadError()
 

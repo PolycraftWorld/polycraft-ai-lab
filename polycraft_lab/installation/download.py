@@ -23,7 +23,7 @@ log = logging.getLogger('pal').getChild('installer')
 def download_and_extract_polycraft(installation_directory: str,
                                    download_directory: str = PAL_TEMP_PATH,
                                    retries: int = 5,
-                                   repo_location: str = REPO_URL,
+                                   bundle_location: str = REPO_URL,
                                    should_cleanup: bool = True):
     """Download and extract the Polycraft World mod to the given directory.
 
@@ -39,34 +39,22 @@ def download_and_extract_polycraft(installation_directory: str,
         download_directory (str): The location where the Polycraft World zip
             will be downloaded, a temporary directory by default
         retries (int): How many times to retry download if it fails.
-        repo_location (str): The URL from where to download the Polcraft World
+        bundle_location (str): The URL from where to download the Polycraft World
             zip installation.
         should_cleanup (bool): True if the downloaded file should be deleted after
             installation 
     """
     for attempt in range(1, retries):
         # TODO: Perform in separate thread
-        # TODO: Implement exponential backoff
         log.info('Downloading Polycraft World mod, attempt #%s', attempt)
         _backoff(attempt)
         try:
             Path(download_directory).mkdir(parents=True, exist_ok=True)  # Ensure the directory exists
-            download_file_path = Path(download_directory) / MOD_ZIP_NAME
-            log.debug('Downloading to %s', download_file_path)
-            request.urlretrieve(repo_location, filename=download_file_path)
-            with ZipFile(download_file_path, 'r') as zip_ref:
-                # Downloading from GitHub should only have one subdirectory
-                extracted_name = zip_ref.namelist()[0]
-                zip_ref.extractall(path=Path(installation_directory))
-            os.chdir(Path(installation_directory).parent)
-            os.rename(Path(installation_directory) / extracted_name,
-                      Path(PAL_TEMP_PATH) / PAL_MOD_DIR_NAME)
-            shutil.rmtree(installation_directory)
-            os.rename(Path(PAL_TEMP_PATH) / PAL_MOD_DIR_NAME,
-                      installation_directory)
-            # TODO: Cache installation of mod to prevent unnecessary downloads
-            if should_cleanup:
-                shutil.rmtree(PAL_TEMP_PATH)
+            bundle_path = Path(download_directory) / MOD_ZIP_NAME
+            log.debug('Downloading to %s', bundle_path)
+            request.urlretrieve(bundle_location, filename=bundle_path)
+            # TODO: Cache installation of mod based on version to prevent unnecessary downloads
+            _extract_polycraft(bundle_path, installation_directory, should_cleanup)
             return
         except URLError as e:
             log.error('Could not download Polycraft World on attempt %s', attempt)
@@ -79,6 +67,30 @@ def download_and_extract_polycraft(installation_directory: str,
             raise PolycraftDownloadError(e)
     log.error('Could not download Polycraft World mod.')
     raise PolycraftDownloadError()
+
+
+def _extract_polycraft(bundle_path: str, dest_dir: str,
+                       should_cleanup: bool = True):
+    """Extract a Polycraft World bundle to a given location.
+
+    Args:
+        bundle_path (str): The location to the zip file containing the
+            Polycraft World installation
+        dest_dir (str): The destination directory to extract Pol
+        should_cleanup (str):
+    """
+    with ZipFile(bundle_path, 'r') as zip_ref:
+        # Downloading from GitHub should only have one subdirectory
+        extracted_name = zip_ref.namelist()[0]
+        zip_ref.extractall(path=Path(dest_dir))
+    os.chdir(Path(dest_dir).parent)
+    os.rename(Path(dest_dir) / extracted_name,
+              Path(PAL_TEMP_PATH) / PAL_MOD_DIR_NAME)
+    shutil.rmtree(dest_dir)
+    os.rename(Path(PAL_TEMP_PATH) / PAL_MOD_DIR_NAME,
+              dest_dir)
+    if should_cleanup:
+        shutil.rmtree(PAL_TEMP_PATH)
 
 
 class PolycraftDownloadError(Exception):

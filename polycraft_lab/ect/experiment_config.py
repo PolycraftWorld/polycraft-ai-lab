@@ -18,7 +18,9 @@ class ExperimentConfig:
             config_path (str): The path to the experiment configuration file JSON.
         """
         self._config_path = Path(config_path)
-        self.config = self._load_config(config_path)
+        config = self._load_config(config_path)
+        self._validate_config(config)
+        self.config = config
 
     @classmethod
     def from_file(cls, config_path: str):
@@ -34,6 +36,17 @@ class ExperimentConfig:
         with codecs.open(config_path) as file:
             return json.load(file)
 
+    @staticmethod
+    def _validate_config(config: dict):
+        """Check if the given config contains all proper values.
+
+        Raises:
+            InvalidExperimentConfigError if the config contains any improper
+            values.
+        """
+        if not config[CONFIG_ACTION_SPACE]:
+            raise InvalidActionSpaceError
+
     @property
     def action_space(self) -> Dict:
         """Return the Polycraft Lab socket port."""
@@ -41,6 +54,8 @@ class ExperimentConfig:
 
     @action_space.setter
     def action_space(self, new_action_space: dict):
+        if type(new_action_space) != dict:
+            raise TypeError(f'{new_action_space} is not a dict.')
         self.config[CONFIG_ACTION_SPACE] = new_action_space
         with codecs.open(self._config_path, 'r+', encoding='utf-8') as config_file:
             data = json.load(config_file)
@@ -63,3 +78,11 @@ class ExperimentConfig:
             config_file.seek(0)
             json.dump(data, config_file, indent=4)
             config_file.truncate()
+
+
+class InvalidExperimentConfigError(Exception):
+    """Raised when any part of an experiment creation file is invalid."""
+
+
+class InvalidActionSpaceError(InvalidExperimentConfigError):
+    """Raised when no action space is detected in an experiment configuration file."""

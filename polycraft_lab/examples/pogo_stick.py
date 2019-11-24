@@ -14,9 +14,10 @@ def main(config_file_path: str = CONFIG_FILE_PATH):
         step = 0
         while not done:
             action = env.action_space.sample()
-            (observation, done, info) = env.step(action)
+            (observation, reward, done, info) = env.step(action)
             step += 1
-        print(f'Episode finished in {step + 1} steps')
+            print(f'Current reward: {reward}')
+        print(f'Episode finished in {step} steps')
 
 
 if __name__ == '__main__':

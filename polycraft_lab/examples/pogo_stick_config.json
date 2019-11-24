@@ -1,4 +1,42 @@
 {
-  "action_space": [
-  ]
+  "action_space": {
+    "type": "dict",
+    "attack": {
+      "type": "discrete",
+      "value": 2
+    },
+    "forward": {
+      "type": "discrete",
+      "value": 2
+    },
+    "backward": {
+      "type": "discrete",
+      "value": 2
+    },
+    "left": {
+      "type": "discrete",
+      "value": 2
+    },
+    "right": {
+      "type": "discrete",
+      "value": 2
+    },
+    "jump": {
+      "type": "discrete",
+      "value": 2
+    },
+    "sneak": {
+      "type": "discrete",
+      "value": 2
+    }
+  },
+  "observation_space": {
+    "compassAngle": {
+      "type": "box"
+    },
+    "pov": {
+      "type": "box",
+      "value": "(64, 3, 3)"
+    }
+  }
 }

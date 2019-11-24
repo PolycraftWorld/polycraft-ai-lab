@@ -74,10 +74,12 @@ class _PolycraftModRuntime:
 
     def start(self):
         """Start running Minecraft."""
+        if platform.system() not in ['Windows', 'Linux', 'Darwin']:
+            raise Exception('Attempting to start client on an unspported OS.')
         gradlew_name = 'gradlew'
         if platform.system() == 'Windows':
             gradlew_name = 'gradlew.bat'
-        executable_base = f'{self.installation.client_location}\\{gradlew_name}'
+        executable_base = str(Path(self.installation.client_location) / gradlew_name)
         logging.info('Starting Minecraft...')
         logging.info('This may also take a bit.')
         self.client_process = Popen([executable_base, 'runClient'], stdout=PIPE, shell=True)

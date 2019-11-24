@@ -2,13 +2,16 @@
 import logging
 
 import gym
-from gym.envs.registration import register
+from gym.envs.registration import EnvRegistry, register
 
 DYNAMIC_ENV_ID = 'PALDynamicEnv-v0'
 
-register(
-    id=DYNAMIC_ENV_ID,
-    entry_point='polycraft_lab.envs.dynamic_environment:DynamicExperimentEnv',
+# Account for possibility of multiple imports
+registry = EnvRegistry()
+if DYNAMIC_ENV_ID not in registry.env_specs:
+    register(
+        id=DYNAMIC_ENV_ID,
+        entry_point='polycraft_lab.envs.dynamic_environment:DynamicExperimentEnv',
 )
 
 log = logging.getLogger('pal')

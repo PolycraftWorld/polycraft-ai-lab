@@ -31,7 +31,16 @@ pip install ./polycraft-ai-lab
 
 If you installed PAL using method (1a), this isn't required.
 
-### 2. Import and Use
+### 2. Setting up PAL
+Run the following command and follow the guided instructions:
+```shell script
+pal init
+```
+
+This will automatically download Polycraft World to your local
+machine and initialize up other configuration files.
+
+### 3. Import and Use
 Now train your agent like you would do with any other gym-style environment:
 ```python
 from polycraft_lab.envs.helpers import setup_env

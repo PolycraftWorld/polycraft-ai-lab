@@ -3,10 +3,12 @@ import logging
 import os
 import platform
 import shutil
+import stat
 import subprocess
 from pathlib import Path
 
-from polycraft_lab.installation import PAL_LAB_DIR_NAME, PAL_MOD_DIR_NAME
+from polycraft_lab.installation import PAL_DEFAULT_PATH, PAL_LAB_DIR_NAME, \
+    PAL_MOD_DIR_NAME
 from polycraft_lab.installation.download import download_and_extract_polycraft
 from polycraft_lab.installation.releases import UnknownVersionError, get_release
 
@@ -19,7 +21,7 @@ class PolycraftInstallation:
     # TODO: Choose more sensible location, like AppData for windows or /opt for Linux
     DEFAULT_DIRECTORY = str(Path().home() / PAL_LAB_DIR_NAME)
 
-    def __init__(self, installation_directory: str = DEFAULT_DIRECTORY):
+    def __init__(self, installation_directory: str = PAL_DEFAULT_PATH):
         # TODO: Maybe download installation to parent folder of running script
         self._installation_directory = installation_directory
 
@@ -29,7 +31,10 @@ class PolycraftInstallation:
         # TODO: Perform a more thorough check of installation, maybe also with a hash
         # TODO: Find a way to automate ensuring Polycraft is installed
         # TODO: Differentiate between if client is installed vs installed and built
-        return (Path(self._installation_directory) / PAL_MOD_DIR_NAME / 'build').exists()
+        return (Path(
+            self._installation_directory) / PAL_MOD_DIR_NAME
+                # / 'build'
+                ).exists()
 
     @property
     def location(self):
@@ -66,15 +71,22 @@ class PolycraftInstallation:
                 log.debug('Launching setup...')
                 self._run_setup()
             except UnknownVersionError:
-                log.exception('Attempted to install unknown version of Polycraft: %s', version)
+                log.exception(
+                    'Attempted to install unknown version of Polycraft: %s',
+                    version)
             except InstallationDownloadError:
-                log.exception(f'Could not download Polycraft World mod folder to {self.client_location}')
+                log.exception(
+                    f'Could not download Polycraft World mod folder to'
+                    f'{self.client_location}')
                 raise
             except InstallationBuildError:
-                log.exception('Could not install and build Polycraft World mod.')
+                log.exception(
+                    'Could not install and build Polycraft World mod.')
                 raise
         elif self.is_installed:
-            log.info('Polycraft World is installed and `force_install` is false, so not installing mod.')
+            log.info(
+                'Polycraft World is installed and `force_install` is false, '
+                'so not installing mod.')
             return
 
     def ensure_polycraft_installed(self):
@@ -115,11 +127,17 @@ class PolycraftInstallation:
         else:
             raise RuntimeError('OS not supported for Polycraft Lab: %s', system)
         executable = str(Path(self.client_location) / gradlew_name)
+        if system == 'Linux':
+            # Ensure gradlew is executable
+            st = os.stat(str(executable))
+            os.chmod(str(executable), st.st_mode | stat.S_IEXEC)
+        # TODO: Ensure java executable exists
         try:
-            logging.info(f'Setting up workspace in {self.client_location}...')
-            subprocess.run(f'{executable} setupDecompWorkspace --refresh-dependencies'.split())
-            logging.info('Starting Minecraft build...')
-            logging.info('This may take a while.')
+            log.info(f'Setting up workspace in {self.client_location}...')
+            subprocess.run(
+                f'{executable} setupDecompWorkspace --refresh-dependencies'.split())
+            log.info('Starting Minecraft build...')
+            log.info('This may take a while.')
             subprocess.run(f'{executable} build'.split())
         except Exception:
             raise InstallationBuildError()

@@ -40,6 +40,9 @@ def get_release(version: str) -> PolycraftWorldRelease:
     Raises:
         UnknownVersionError if the given version does not exist.
     """
+    if version is 'newest':
+        releases = get_release_list()
+        return releases[0]  # First release is newest
     response = requests.get(f'{RELEASES_ENDPOINT}/{version}')
     if not response.ok:
         raise UnknownVersionError('Version not found')
@@ -69,9 +72,18 @@ def get_release_list(released_after: str = None) -> List[PolycraftWorldRelease]:
     for release in releases:
         version = release['name']
         download_url = release['zipball_url']
-        release_date = release['created_at']
-        release_date_timestamp = datetime.fromisoformat(release_date).timestamp()
-        released_after_timestamp = datetime.fromisoformat(released_after).timestamp()
+        release_date: str = release['created_at']
+        # Hack because GitHub release uses RFC 3339
+        release_date = release_date.replace('Z', '+00:00')
+        release_date_timestamp = datetime.fromisoformat(
+            release_date).timestamp()
+        if not isinstance(released_after, str):
+            # TODO: Fix silent fail for non-str
+            released_after_timestamp = datetime.fromisoformat(
+                "1970-01-01T00:00:00+00:00").timestamp()
+        else:
+            released_after_timestamp = datetime.fromisoformat(
+                released_after).timestamp()
         if release_date_timestamp < released_after_timestamp:
             continue
         releases_result.append(PolycraftWorldRelease(

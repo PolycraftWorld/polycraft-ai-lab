@@ -1,5 +1,5 @@
 build/
 dist/
-polycraft_lab.egg-info/
+polycraft-lab.egg-info/
 
 .idea/

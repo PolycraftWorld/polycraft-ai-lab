@@ -14,4 +14,5 @@ log.addHandler(logging.StreamHandler())
 
 PAL_MOD_DIR_NAME = 'polycraft-world'
 PAL_LAB_DIR_NAME = 'polycraft-lab'
+PAL_DEFAULT_PATH = Path().home() / PAL_LAB_DIR_NAME
 PAL_TEMP_PATH = Path(tempfile.gettempdir()) / PAL_LAB_DIR_NAME

@@ -5,10 +5,13 @@ import os
 import random
 import shutil
 import time
+import urllib
 from pathlib import Path
 from urllib import request
 from urllib.error import URLError
 from zipfile import ZipFile
+
+from tqdm import tqdm
 
 from polycraft_lab.installation import PAL_MOD_DIR_NAME, PAL_TEMP_PATH
 
@@ -49,24 +52,43 @@ def download_and_extract_polycraft(installation_directory: str,
         log.info('Downloading Polycraft World mod, attempt #%s', attempt)
         _backoff(attempt)
         try:
-            Path(download_directory).mkdir(parents=True, exist_ok=True)  # Ensure the directory exists
+            # Ensure the directory exists
+            Path(download_directory).mkdir(parents=True, exist_ok=True)
             bundle_path = Path(download_directory) / MOD_ZIP_NAME
             log.debug('Downloading to %s', bundle_path)
-            request.urlretrieve(bundle_location, filename=bundle_path)
+
+            _download_url(bundle_location, bundle_path)
             # TODO: Cache installation of mod based on version to prevent unnecessary downloads
-            _extract_polycraft(bundle_path, installation_directory, should_cleanup)
+            _extract_polycraft(bundle_path, installation_directory,
+                               should_cleanup)
             return
         except URLError as e:
-            log.error('Could not download Polycraft World on attempt %s', attempt)
+            log.error('Could not download Polycraft World on attempt %s',
+                      attempt)
             raise PolycraftDownloadError(e)
         except OSError as e:
             log.exception('Error when extracting Polycraft World mod')
             raise PolycraftDownloadError(e)
         except Exception as e:
-            log.exception('Could not download Polycraft World on attempt %s', attempt)
+            log.exception('Could not download Polycraft World on attempt %s',
+                          attempt)
             raise PolycraftDownloadError(e)
     log.error('Could not download Polycraft World mod.')
     raise PolycraftDownloadError()
+
+
+class DownloadProgressBar(tqdm):
+    def update_to(self, b=1, bsize=1, tsize=None):
+        if tsize is not None:
+            self.total = tsize
+        self.update(b * bsize - self.n)
+
+
+def _download_url(url, output_path):
+    with DownloadProgressBar(unit='B', unit_scale=True,
+                             miniters=1, desc=url.split('/')[-1]) as t:
+        urllib.request.urlretrieve(url, filename=output_path,
+                                   reporthook=t.update_to)
 
 
 def _extract_polycraft(bundle_path: str, dest_dir: str,

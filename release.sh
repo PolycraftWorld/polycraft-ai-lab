@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 # TODO: Wrap in virtualenv, maybe a Docker container for building
 
+rm -rf build dist polycraft_lab.egg-info
+
 # Ensure dependencies are installed before release
 echo -e "\n=======Preparing dependencies for release======="
 pip3 install -r requirements.txt
@@ -27,3 +29,7 @@ else
     twine upload dist/* --repository testpypi
 fi
 
+echo "Release complete!"
+
+# Clean up files
+rm -rf build dist polycraft_lab.egg-info

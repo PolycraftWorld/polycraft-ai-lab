@@ -5,7 +5,7 @@ This primarily contains one key environment: the `DynamicExperimentEnv` in
 automatically creates an environment based on it.
 """
 
-from polycraft_lab.envs.dynamic_environment import DynamicExperimentEnv
-from polycraft_lab.envs.helpers import setup_env
+# from polycraft_lab.envs.dynamic_environment import DynamicExperimentEnv
+# from polycraft_lab.envs.helpers import setup_env
 
-__all__ = ['DynamicExperimentEnv', 'setup_env']
+# __all__ = ['DynamicExperimentEnv', 'setup_env']

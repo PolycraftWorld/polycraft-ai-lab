@@ -17,8 +17,8 @@ with open(str(Path(parent) / 'requirements.txt'), encoding='utf-8') as f:
     package_dependencies = f.read().split('\n')
 
 setup(
-    name='polycraft_lab',
-    version='0.1.0',
+    name='polycraft-lab',
+    version='0.1.0a0',
     author='Polycraft World',
     author_email='willie.chalmers@polycraftworld.com',
     description='A tool to help train RL agents in novel environments.',

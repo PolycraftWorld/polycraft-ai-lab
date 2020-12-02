@@ -1,3 +1,3 @@
-"""The Polycraft AI Lab CLI, allowing starting of various PAL-ECT functions."""
+"""The Polycraft AI Lab CLI, allowing starting of various PAL functions."""
 
-__all__ = ['wrapper']
+__all__ = ['entrypoint']

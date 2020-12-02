@@ -2,5 +2,10 @@
 
 Examples can be found in `examples`.
 """
+from polycraft_lab.cli.entrypoint import run_cli
 
-__all__ = ['cli', 'ect', 'envs', 'examples', 'tests']
+# from polycraft_lab.envs.core import create_env, get_tasks
+
+__all__ = ['cli', 'ect', 'envs', 'examples', 'tests', 'run_cli'
+           # 'get_tasks', 'create_env',
+           ]

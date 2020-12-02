@@ -1,0 +1,4 @@
+gym
+requests
+tqdm
+fire

@@ -14,6 +14,8 @@ import os
 import platform
 import signal
 import socket
+import time
+from pathlib import Path
 from subprocess import PIPE, Popen
 
 from polycraft_lab.installation.config import PolycraftLabConfig
@@ -25,6 +27,11 @@ DEFAULT_PORT = 9000
 log = logging.getLogger(__name__)
 
 
+class ClientDidNotStartError(ConnectionRefusedError):
+    """Raised when the client did not start in time to connect."""
+    # TODO: Add time waited and number of attempts to message
+
+
 class PolycraftClient:
     """A module that manages a running Polycraft World client."""
 
@@ -33,12 +40,14 @@ class PolycraftClient:
         # TODO: Fetch values from config
         config = PolycraftLabConfig.from_installation(installation_path)
         self.runtime = _PolycraftModRuntime(installation_path)
-        self.server = _PolycraftServerBridge(host=config.lab_server_host, port=config.lab_server_port)
+        self.server = _PolycraftServerBridge(host=config.lab_server_host,
+                                             port=config.lab_server_port)
 
     def start(self):
         self.runtime.start()
         # TODO: Connect ends
         # TODO: Wait until game is started to start socket
+
         self.server.start()
 
     def stop(self):
@@ -79,10 +88,12 @@ class _PolycraftModRuntime:
         gradlew_name = 'gradlew'
         if platform.system() == 'Windows':
             gradlew_name = 'gradlew.bat'
-        executable_base = str(Path(self.installation.client_location) / gradlew_name)
+        executable_base = str(
+            Path(self.installation.client_location) / gradlew_name)
         logging.info('Starting Minecraft...')
         logging.info('This may also take a bit.')
-        self.client_process = Popen([executable_base, 'runClient'], stdout=PIPE, shell=True)
+        self.client_process = Popen([executable_base, 'runClient'], stdout=PIPE,
+                                    shell=True)
 
 
 class _PolycraftServerBridge:
@@ -97,13 +108,22 @@ class _PolycraftServerBridge:
         self.port = port
         self._should_stop = False
 
-    def start(self):
+    def start(self, max_attempts=4):
         """Start the Polycraft Lab to Polycraft World communication bridge.
 
         Note: This will crash if Polycraft World is not running.
         TODO: Fail more softly.
         """
-        self._start_server()
+        log.info('Waiting for client to start')
+        backoff = 10  # 10 seconds
+        for attempt in range(max_attempts):
+            try:
+                self._start_server()
+                return
+            except ConnectionRefusedError:
+                log.debug(f'Attempt {attempt} to start server failed')
+                time.sleep(backoff)
+                backoff *= 2  # Exponential backoff
 
     def finish(self):
         """Stop the communication bridge.

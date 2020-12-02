@@ -1,30 +1,46 @@
-from setuptools import find_packages, setup
+"""Configuration for installing this package using pip or setuptools."""
+import pathlib
+from pathlib import Path
 
-from polycraft_lab.installation.post_pip_install import PostDevelopCommand, PostInstallCommand
+from setuptools import find_namespace_packages, setup
 
-with open('README.md', 'r') as file:
-    long_description = file.read()
+from polycraft_lab.installation.post_pip_install import PostDevelopCommand, \
+    PostInstallCommand
+
+parent = pathlib.Path(__file__).parent
+
+long_description = (parent / 'README.md').read_text()
+
+# automatically captured required modules for install_requires in
+# requirements.txt
+with open(str(Path(parent) / 'requirements.txt'), encoding='utf-8') as f:
+    package_dependencies = f.read().split('\n')
 
 setup(
     name='polycraft-lab',
-    version='0.1.0',
+    version='0.1.0a0',
     author='Polycraft World',
     author_email='willie.chalmers@polycraftworld.com',
     description='A tool to help train RL agents in novel environments.',
     long_description=long_description,
     long_description_content_type='text/markdown',
+    entry_points={
+        'console_scripts': [
+            'pal=polycraft_lab:run_cli',
+        ],
+    },
     url='https://polycraftworld.com',
     project_urls={
         'Bug Tracker': 'https://github.com/PolycraftWorld/polycraft-ai-lab/issues/',
         'Documentation': 'https://polycraftworld.github.io/polycraft-ai-lab/',
         'Source Code': 'https://github.com/PolycraftWorld/polycraft-ai-lab/',
     },
-    packages=find_packages(),
+    packages=find_namespace_packages(),
     cmdclass={
         'develop': PostDevelopCommand,
         'install': PostInstallCommand,
     },
-    install_requires=['gym'],
+    install_requires=package_dependencies,
     classifiers=[
         'Programming Language :: Python :: 3',
         # TODO: Set open source license

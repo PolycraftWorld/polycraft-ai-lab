@@ -2,32 +2,41 @@
 *A tool to help train reinforcement learning models to handle novel environments.*
 
 ## About
-Polycraft AI Lab consists of a wrapper for OpenAI Gym along with a dynamic means
-of loading environments for experiments created in the Polycraft AI Lab
-Experiment Creation Tool (PAL-ECT).
-
-These environments can used to train RL models that respond to novel environments.
-
-Note: Experiments are not created using this tool; they are created using the
-Experiment Creation Tool (which will eventually be in its own repository).
+Polycraft AI Lab consists of a wrapper for Polycraft World game environments.
+These environments can used to train RL models that respond to novel tasks
+and scenarios.
 
 ## Usage
-**Note: this is an example of planned usage coming soon.**
 
-First, download Polycraft AI Lab using pip or pipenv:
-```
+### 1a. Install via package
+First, download Polycraft AI Lab using pip:
+```shell script
 pip install polycraft-lab
 ```
 
-TODO: Update docs to include more thorough example.
+This downloads the `polycraft-lab` package from pip, which contains tools to
+easily set up and manage the Polycraft game client.
 
-Now train your agent:
+To install the most recent changes (experimental version):
+```shell script
+pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://test.pypi.org/simple/ polycraft-lab
+```
+
+### 1b. Local Installation
+Alternatively, to install the latest version from source:
+```shell script
+git clone https://github.com/PolycraftWorld/polycraft-ai-lab
+pip install ./polycraft-ai-lab
+```
+
+If you installed PAL using method (1a), this isn't required.
+
+### 2. Import and Use
+Now train your agent like you would do with any other gym-style environment:
 ```python
-from polycraft_lab.helpers import setup_env
+from polycraft_lab.envs.helpers import setup_env
 
-POGO_EXPERIMENT_CONFIG_PATH = '/home/me/experiments/pogostick_challenge.json'
-
-env = setup_env(POGO_EXPERIMENT_CONFIG_PATH)
+env = setup_env('pogo_stick')
 observation = env.reset()
 for _ in range(1000):
     env.render()
@@ -42,7 +51,7 @@ env.close()
 Polycraft AI Lab also contains a wrapper [WIP] to start experiment creation from
 the command line. The following begins the experiment creation process by
 launching Minecraft:
-```
+```shell script
 python -m polycraft_lab.ect --create EXPERIMENT_NAME --launch
 ``` 
 
@@ -53,32 +62,33 @@ diamonds as quickly as possible.
 
 ## Development
 Clone out the repository:
-```
+```shell script
 git clone https://github.com/PolycraftWorld/polycraft-ai-lab.git
 ```
 
-Create a virtual environment. Switch to the project's directory and then install
-the project's dependencies using pipenv:
-```
-cd polycraft-ai-lab
-pipenv install
+Optionally, you can create a virtual environment to store dependencies.
+
+In any case, install the dependencies:
+```shell script
+pip install -r requirements.txt
 ```
 
-Alternatively, install using pip:
-```
-pip install -r requirements.txt
+Alternatively, a virtual environment can be created with the necessary
+dependencies by running:
+```shell script
+cd polycraft-ai-lab
+pipenv install
 ```
 
 ### Distribution
 Polycraft AI Lab will be distributed using pip.
 
-Run the following to prepare Polycraft for distribution:
+The easy way to upload to upload to the test PyPI index:
+```shell script
+./release.sh
 ```
-python setup.py sdist bdist_wheel
-pip install --user --upgrade twine
-```
-Now run the following to upload the package to PyPI:
-```
-# NOTE: Use https://test.pypi.org/legacy/ for test or staging releases.
-python -m twine upload dist/*
+
+To release to the live PyPI index:
+```shell script
+./release.sh --release
 ```

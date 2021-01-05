@@ -1,7 +1,7 @@
 """Polycraft AI Lab (PAL) environments.
 
 This primarily contains one key environment: the `DynamicExperimentEnv` in
-`dynamic_environment.py`. This environment loads configuation data and
+`core.py`. This environment loads configuation data and
 automatically creates an environment based on it.
 """
 

@@ -7,6 +7,9 @@ verify_ssl = true
 
 [packages]
 gym = "*"
+requests = "*"
+tdqm = "*"
+fire = "*"
 
 [requires]
 python_version = "3.7"

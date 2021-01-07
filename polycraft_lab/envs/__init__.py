@@ -1,11 +1,14 @@
 """Polycraft AI Lab (PAL) environments.
 
-This primarily contains one key environment: the `DynamicExperimentEnv` in
-`core.py`. This environment loads configuation data and
-automatically creates an environment based on it.
+This primarily contains one key environment: the `PolycraftEnv` in `core.py`.
+This environment loads configuration data and automatically creates an OpenAI
+Gym-like environment based on the config.
+
+The `setup_env` helper function should be used to create a new environment
+instead of instantiating a `PolycraftEnv` directly.
 """
 
-# from polycraft_lab.envs.dynamic_environment import DynamicExperimentEnv
-# from polycraft_lab.envs.helpers import setup_env
+from polycraft_lab.envs.core import PolycraftEnv
+from polycraft_lab.envs.helpers import make
 
-# __all__ = ['DynamicExperimentEnv', 'setup_env']
+__all__ = ['PolycraftEnv', 'make']

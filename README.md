@@ -42,14 +42,15 @@ machine and initialize up other configuration files.
 
 ### 3. Import and Use
 Now train your agent like you would do with any other gym-style environment:
-```python
-from polycraft_lab.envs.helpers import setup_env
 
-env = setup_env('pogo_stick')
+```python
+from polycraft_lab import make
+
+env = make('pogo_stick')
 observation = env.reset()
 for _ in range(1000):
     env.render()
-    action = env.action_space.sample() # your agent here (this takes random actions)
+    action = env.action_space.sample()  # your agent here (this takes random actions)
     observation, reward, done, info = env.step(action)
 
     if done:
